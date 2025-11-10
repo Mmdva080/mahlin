@@ -138,32 +138,66 @@ function addCat() {
     });
     Matter.World.add(world, body);
 
-    cats.push({ body, radius });
+    cats.push({ body, radius, highlighted: false });
 }
+
+const catImage = new Image();
+catImage.src = 'https://i.ibb.co/8bZkZy4/cat.png';
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const catImage = new Image();
-    catImage.src = 'https://i.ibb.co/8bZkZy4/cat.png'; // لینک اینترنتی قابل اعتماد
 
     cats.forEach(cat => {
         ctx.save();
         ctx.translate(cat.body.position.x, cat.body.position.y);
         ctx.rotate(cat.body.angle);
+        if(cat.highlighted){
+            ctx.shadowColor = '#00ffff';
+            ctx.shadowBlur = 20;
+        } else {
+            ctx.shadowBlur = 0;
+        }
         ctx.drawImage(catImage, -cat.radius, -cat.radius, cat.radius*2, cat.radius*2);
         ctx.restore();
+        cat.highlighted = false; // ریست highlight بعد هر frame
     });
 
     requestAnimationFrame(draw);
 }
 
-canvas.addEventListener('mousedown', playSound);
-canvas.addEventListener('touchstart', playSound);
-
-function playSound() {
-    const s = Math.random() > 0.5 ? 'meow' : 'purr';
-    document.getElementById(s).play();
+// بررسی لمس یا موس دقیق روی گربه‌ها
+function handleInteraction(x, y) {
+    cats.forEach(cat => {
+        const dx = x - cat.body.position.x;
+        const dy = y - cat.body.position.y;
+        const distance = Math.sqrt(dx*dx + dy*dy);
+        if(distance <= cat.radius){
+            cat.highlighted = true;
+            const s = Math.random() > 0.5 ? 'meow' : 'purr';
+            document.getElementById(s).play();
+        }
+    });
 }
+
+// موس
+canvas.addEventListener('mousemove', e => {
+    if(e.buttons) handleInteraction(e.clientX, e.clientY);
+});
+canvas.addEventListener('mousedown', e => handleInteraction(e.clientX, e.clientY));
+
+// لمس
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    for(const t of e.touches){
+        handleInteraction(t.clientX, t.clientY);
+    }
+});
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    for(const t of e.touches){
+        handleInteraction(t.clientX, t.clientY);
+    }
+});
 
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
