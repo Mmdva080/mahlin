@@ -68,14 +68,6 @@ button:hover {
     transform: scale(1.05);
     box-shadow: 0 0 25px cyan;
 }
-
-img.cat {
-    max-width: 120px !important;
-    pointer-events: auto;
-    user-select: none;
-    position: absolute;
-    transform: translate(-50%, -50%);
-}
 </style>
 
 </head>
@@ -88,7 +80,7 @@ img.cat {
     <button onclick="enter()">ورود</button>
 </div>
 
-<div id="world"></div>
+<canvas id="worldCanvas"></canvas>
 
 <audio id="meow" src="https://assets.mixkit.co/sfx/preview/mixkit-cat-meow-1456.mp3"></audio>
 <audio id="purr" src="https://assets.mixkit.co/sfx/preview/mixkit-cat-purr-1457.mp3"></audio>
@@ -98,12 +90,16 @@ img.cat {
 const MAX_CATS = 15;
 let cats = [];
 
-const worldDiv = document.getElementById('world');
+const canvas = document.getElementById('worldCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
 const login = document.getElementById('login');
 const user = document.getElementById('user');
 const pass = document.getElementById('pass');
 
-let engine, world, render, mouse, mouseConstraint;
+let engine, world;
 
 function enter() {
     if (user.value.trim() === 'ماهلین' && pass.value.trim() === 'ماهلین') {
@@ -114,21 +110,9 @@ function enter() {
 }
 
 function initWorld() {
-    const Matter = window.Matter;
     engine = Matter.Engine.create();
     world = engine.world;
     world.gravity.y = 0.35;
-
-    render = Matter.Render.create({
-        element: worldDiv,
-        engine: engine,
-        options: {
-            width: window.innerWidth,
-            height: window.innerHeight,
-            wireframes: false,
-            background: 'transparent'
-        }
-    });
 
     // دیوارهای نامرئی
     Matter.World.add(world, [
@@ -138,54 +122,43 @@ function initWorld() {
         Matter.Bodies.rectangle(innerWidth+50, innerHeight/2, 100, innerHeight+200, { isStatic: true })
     ]);
 
-    mouse = Matter.Mouse.create(render.canvas);
-    mouseConstraint = Matter.MouseConstraint.create(engine, {
-        mouse: mouse,
-        constraint: { stiffness: 0.2, render: { visible: false }}
-    });
-    Matter.World.add(world, mouseConstraint);
-
-    Matter.Render.run(render);
     Matter.Runner.run(Matter.Runner.create(), engine);
+    requestAnimationFrame(draw);
 }
 
 function addCat() {
     if (cats.length >= MAX_CATS) {
-        const old = cats.shift();
-        old.img.remove();
-        Matter.World.remove(world, old.body);
+        cats.shift();
     }
 
-    const cat = document.createElement('img');
-    cat.src = "cat.png"; // لینک تستی گربه
-    cat.classList.add("cat");
-    worldDiv.appendChild(cat);
-
-    const body = Matter.Bodies.circle(innerWidth/2, innerHeight/2, 50, {
-        render: { visible: false },
+    const radius = 40;
+    const body = Matter.Bodies.circle(innerWidth/2, innerHeight/2, radius, {
         restitution: 0.9,
         frictionAir: 0.01
     });
     Matter.World.add(world, body);
 
-    const updateCat = () => {
-        cat.style.left = body.position.x + 'px';
-        cat.style.top = body.position.y + 'px';
-        cat.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
-    };
-    Matter.Events.on(engine, 'afterUpdate', updateCat);
-
-    cat.addEventListener('touchstart', playSound);
-    cat.addEventListener('mousedown', playSound);
-
-    cats.push({ img: cat, body });
-
-    setTimeout(() => {
-        cat.remove();
-        Matter.World.remove(world, body);
-        cats = cats.filter(c => c.body !== body);
-    }, 24000);
+    cats.push({ body, radius });
 }
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const catImage = new Image();
+    catImage.src = 'https://i.ibb.co/8bZkZy4/cat.png'; // لینک اینترنتی قابل اعتماد
+
+    cats.forEach(cat => {
+        ctx.save();
+        ctx.translate(cat.body.position.x, cat.body.position.y);
+        ctx.rotate(cat.body.angle);
+        ctx.drawImage(catImage, -cat.radius, -cat.radius, cat.radius*2, cat.radius*2);
+        ctx.restore();
+    });
+
+    requestAnimationFrame(draw);
+}
+
+canvas.addEventListener('mousedown', playSound);
+canvas.addEventListener('touchstart', playSound);
 
 function playSound() {
     const s = Math.random() > 0.5 ? 'meow' : 'purr';
@@ -193,11 +166,9 @@ function playSound() {
 }
 
 window.addEventListener('resize', () => {
-    render.canvas.width = innerWidth;
-    render.canvas.height = innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 });
-
-document.addEventListener('keypress', e => e.key === "Enter" && enter());
 </script>
 
 </body>
