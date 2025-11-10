@@ -1,192 +1,197 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #0a0e17;
-            height: 100vh;
-            overflow: hidden;
-            cursor: grab;
-            touch-action: none;
-            user-select: none;
-        }
-        #login {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(20px);
-            padding: 50px 70px;
-            border-radius: 30px;
-            border: 2px solid rgba(0,255,255,0.6);
-            box-shadow: 0 0 80px rgba(0,255,255,0.8);
-            text-align: center;
-            z-index: 9999;
-            color: white;
-            font-family: Tahoma, sans-serif;
-        }
-        #login h1 { 
-            font-size: 48px; 
-            background: linear-gradient(90deg, #00ffff, #00b7eb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-        }
-        input, button {
-            width: 100%; padding: 18px; margin: 15px 0; border: none; border-radius: 18px; font-size: 20px;
-        }
-        input { background: rgba(255,255,255,0.2); color: white; text-align: center; }
-        button { 
-            background: linear-gradient(45deg, #00ffff, #0088ff); 
-            color: black; font-weight: bold; cursor: pointer; 
-            transition: 0.3s;
-        }
-        button:hover { transform: scale(1.1); box-shadow: 0 0 40px cyan; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #0a0e17;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        touch-action: none;
+        user-select: none;
+        cursor: grab;
+    }
+
+    #login {
+        position: fixed;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 350px;
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(20px);
+        padding: 30px 35px;
+        border-radius: 25px;
+        border: 2px solid rgba(0,255,255,0.6);
+        box-shadow: 0 0 40px rgba(0,255,255,0.8);
+        text-align: center;
+        color: white;
+        font-family: Tahoma, sans-serif;
+    }
+
+    #login h1 {
+        font-size: 30px;
+        background: linear-gradient(90deg, #00ffff, #00b7eb);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+    }
+
+    input, button {
+        width: 100%;
+        padding: 14px;
+        margin: 12px 0;
+        border: none;
+        border-radius: 14px;
+        font-size: 18px;
+    }
+
+    input {
+        background: rgba(255,255,255,0.25);
+        color: white;
+        text-align: center;
+    }
+
+    button {
+        background: linear-gradient(45deg, #00ffff, #0088ff);
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px cyan;
+    }
+
+    img {
+        max-width: 120px !important;
+        pointer-events: auto;
+        user-select: none;
+    }
+</style>
+
 </head>
 <body>
 
-    <div id="login">
-     
-        <p>یوزرنیم و پسورد: <b></b></p>
-        <input type="text" id="user" placeholder="نام کاربری">
-        <input type="password" id="pass" placeholder="رمز عبور">
-        <button onclick="enter()">ورود </button>
-    </div>
+<div id="login">
+    <h1>ورود</h1>
+    <input type="text" id="user" placeholder="نام کاربری">
+    <input type="password" id="pass" placeholder="رمز عبور">
+    <button onclick="enter()">ورود</button>
+</div>
 
-    <div id="world"></div>
+<div id="world"></div>
 
-    <audio id="meow" src="https://assets.mixkit.co/sfx/preview/mixkit-cat-meow-1456.mp3"></audio>
-    <audio id="purr" src="https://assets.mixkit.co/sfx/preview/mixkit-cat-purr-1457.mp3"></audio>
+<audio id="meow" src="https://assets.mixkit.co/sfx/preview/mixkit-cat-meow-1456.mp3"></audio>
+<audio id="purr" src="https://assets.mixkit.co/sfx/preview/mixkit-cat-purr-1457.mp3"></audio>
 
-    <script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
-    <script>
-        const MAX_CATS = 15; // حداکثر گربه همزمان
-        let cats = []; // آرایه برای مدیریت گربه‌ها
+<script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
+<script>
 
-        function enter() {
-            if (document.getElementById('user').value.trim() === 'ماهلین' && document.getElementById('pass').value.trim() === 'ماهلین') {
-                document.getElementById('login').remove();
-                initWorld();
-                setInterval(addCat, 800); // هر 0.8 ثانیه یکی
-            } else {
-                alert(' هر دو رو "ماهلین" بزن دیگه');
-            }
+const MAX_CATS = 15;
+let cats = [];
+
+function enter() {
+    if (user.value.trim() === 'ماهلین' && pass.value.trim() === 'ماهلین') {
+        login.remove();
+        initWorld();
+        setInterval(addCat, 800);
+    } else alert('هر دو را "ماهلین" بزن');
+}
+
+let engine, world, render, mouse, mouseConstraint;
+
+function initWorld() {
+    const Matter = window.Matter;
+    engine = Matter.Engine.create();
+    world = engine.world;
+    world.gravity.y = 0.35;
+
+    render = Matter.Render.create({
+        element: worldDiv,
+        engine: engine,
+        options: {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            wireframes: false,
+            background: 'transparent'
         }
+    });
 
-        let engine, world, render, mouse, mouseConstraint;
+    Matter.World.add(world, [
+        Matter.Bodies.rectangle(innerWidth/2, -50, innerWidth+200, 100, { isStatic: true }),
+        Matter.Bodies.rectangle(innerWidth/2, innerHeight+50, innerWidth+200, 100, { isStatic: true }),
+        Matter.Bodies.rectangle(-50, innerHeight/2, 100, innerHeight+200, { isStatic: true }),
+        Matter.Bodies.rectangle(innerWidth+50, innerHeight/2, 100, innerHeight+200, { isStatic: true })
+    ]);
 
-        function initWorld() {
-            const Matter = window.Matter;
-            engine = Matter.Engine.create();
-            world = engine.world;
-            world.gravity.y = 0.35;
+    mouse = Matter.Mouse.create(render.canvas);
+    mouseConstraint = Matter.MouseConstraint.create(engine, {
+        mouse: mouse,
+        constraint: { stiffness: 0.2, render: { visible: false }}
+    });
+    Matter.World.add(world, mouseConstraint);
 
-            render = Matter.Render.create({
-                element: document.getElementById('world'),
-                engine: engine,
-                options: {
-                    width: innerWidth,
-                    height: innerHeight,
-                    wireframes: false,
-                    background: 'transparent'
-                }
-            });
+    Matter.Render.run(render);
+    Matter.Runner.run(Matter.Runner.create(), engine);
+}
 
-            // دیوارهای نامرئی
-            Matter.World.add(world, [
-                Matter.Bodies.rectangle(innerWidth/2, -70, innerWidth + 200, 140, { isStatic: true }),
-                Matter.Bodies.rectangle(innerWidth/2, innerHeight + 70, innerWidth + 200, 140, { isStatic: true }),
-                Matter.Bodies.rectangle(-70, innerHeight/2, 140, innerHeight + 200, { isStatic: true }),
-                Matter.Bodies.rectangle(innerWidth + 70, innerHeight/2, 140, innerHeight + 200, { isStatic: true })
-            ]);
+function addCat() {
+    if (cats.length >= MAX_CATS) {
+        const old = cats.shift();
+        old.img.remove();
+        Matter.World.remove(world, old.body);
+    }
 
-            mouse = Matter.Mouse.create(render.canvas);
-            mouseConstraint = Matter.MouseConstraint.create(engine, {
-                mouse: mouse,
-                constraint: { stiffness: 0.2, render: { visible: false }}
-            });
-            Matter.World.add(world, mouseConstraint);
+    const cat = document.createElement('img');
+    cat.src = "cat.png";
+    cat.style.position = 'absolute';
+    document.body.appendChild(cat);
 
-            Matter.Render.run(render);
-            Matter.Runner.run(Matter.Runner.create(), engine);
-        }
+    const body = Matter.Bodies.circle(innerWidth/2, innerHeight/2, 50, {
+        render: { visible: false },
+        restitution: 0.9,
+        frictionAir: 0.01
+    });
+    Matter.World.add(world, body);
 
-        function addCat() {
-            // اگر بیشتر از 15 تا شد، قدیمی‌ترین رو پاک کن
-            if (cats.length >= MAX_CATS) {
-                const old = cats.shift();
-                if (old.img.parentNode) old.img.remove();
-                Matter.World.remove(world, old.body);
-            }
+    const updateCat = () => {
+        cat.style.left = body.position.x + 'px';
+        cat.style.top = body.position.y + 'px';
+        cat.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
+    };
+    Matter.Events.on(engine, 'afterUpdate', updateCat);
 
-            const cat = document.createElement('img');
-            // عکس محلی خودت — حتماً کنار این فایل HTML باشه
-            cat.src = 'InShot_۲۰۲۵۱۱۱۰_۲۱۱۸۱۵۳۳۲.png';
-            cat.style.position = 'absolute';
-            cat.style.width = '140px';
-            cat.style.pointerEvents = 'auto';
-            cat.style.userSelect = 'none';
-            cat.style.filter = 'drop-shadow(0 0 15px #00ffff)';
-            cat.style.transition = 'filter 0.3s';
-            cat.style.imageRendering = 'crisp-edges'; // برای خطوط تمیز
-            document.getElementById('world').appendChild(cat);
+    cat.addEventListener('touchstart', playSound);
+    cat.addEventListener('mousedown', playSound);
 
-            const centerX = innerWidth / 2;
-            const centerY = innerHeight / 2;
+    cats.push({ img: cat, body });
 
-            const body = Matter.Bodies.circle(centerX, centerY, 70, {
-                render: { visible: false },
-                density: 0.0007,
-                restitution: 0.92,
-                frictionAir: 0.008,
-                angle: Math.random() * Math.PI * 2
-            });
+    setTimeout(() => {
+        cat.remove();
+        Matter.World.remove(world, body);
+        cats = cats.filter(c => c.body !== body);
+    }, 24000);
+}
 
-            Matter.World.add(world, body);
+function playSound() {
+    const s = Math.random() > 0.5 ? 'meow' : 'purr';
+    document.getElementById(s).play();
+}
 
-            // همگام‌سازی
-            const updateCat = () => {
-                cat.style.left = body.position.x + 'px';
-                cat.style.top = body.position.y + 'px';
-                cat.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
-            };
-            Matter.Events.on(engine, 'afterUpdate', updateCat);
+window.addEventListener('resize', () => {
+    render.canvas.width = innerWidth;
+    render.canvas.height = innerHeight;
+});
 
-            // صدا + افکت
-            const playSound = () => {
-                const sounds = ['meow', 'purr'];
-                document.getElementById(sounds[Math.floor(Math.random() * 2)]).play();
-                cat.style.filter = 'drop-shadow(0 0 35px #00ffff)';
-                setTimeout(() => cat.style.filter = 'drop-shadow(0 0 15px #00ffff)', 400);
-            };
-            cat.addEventListener('mousedown', playSound);
-            cat.addEventListener('touchstart', playSound);
+document.addEventListener('keypress', e => e.key === "Enter" && enter());
 
-            // ذخیره در آرایه
-            cats.push({ img: cat, body: body, update: updateCat });
-
-            // بعد 25 ثانیه خودکار پاک بشه
-            setTimeout(() => {
-                if (cat.parentNode) cat.remove();
-                Matter.World.remove(world, body);
-                cats = cats.filter(c => c.body !== body);
-            }, 25000);
-        }
-
-        // ریسایز
-        window.addEventListener('resize', () => {
-            render.canvas.width = innerWidth;
-            render.canvas.height = innerHeight;
-        });
-
-        // ورود با Enter
-        document.addEventListener('keypress', e => e.key === 'Enter' && enter());
-    </script>
+</script>
 </body>
-
 </html>
